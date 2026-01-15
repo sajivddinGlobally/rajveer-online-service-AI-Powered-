@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "629263817932",
+    "project_id": "rajveer-online-services-dcd7e",
+    "storage_bucket": "rajveer-online-services-dcd7e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629263817932:android:b17625792492c1793cb669",
+        "android_client_info": {
+          "package_name": "com.ai_powered_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO8cOy9ki6kjHuZ7eGpvt__QcOrR6Frjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

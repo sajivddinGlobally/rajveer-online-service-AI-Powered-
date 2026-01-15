@@ -1,0 +1,6 @@
+targets:
+  $default:
+    builders:
+      retrofit_generator:
+        options:
+          ignore_to_json: true
