@@ -763,7 +763,12 @@ Widget _buildTextFormField(
 
 */
 
+
+
+
+
 import 'package:ai_powered_app/screen/forgotpassword.page.dart';
+import 'package:ai_powered_app/screen/paymentFormScreen.dart';
 import 'package:ai_powered_app/screen/resister.dart';
 import 'package:ai_powered_app/screen/start.page.dart';
 import 'package:flutter/cupertino.dart';
@@ -1061,9 +1066,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) => RegisterPage(title: widget.title),
+                              (context) => RegisterPage(title: widget.title,),
                         ),
                       );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder:
+                      //         (context) =>
+                      //             PaymentFormScreen(title: widget.title),
+                      //   ),
+                      // );
                     },
                     child: RichText(
                       text: TextSpan(

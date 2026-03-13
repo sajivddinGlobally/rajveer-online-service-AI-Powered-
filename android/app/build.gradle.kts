@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.ai_powered_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "26.2.11394342"
+    ndkVersion = "27.0.12077973"
 
 //    ndkVersion = "27.0.12077973"
 

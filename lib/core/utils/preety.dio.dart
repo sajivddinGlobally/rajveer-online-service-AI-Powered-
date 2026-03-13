@@ -56,7 +56,6 @@ Dio createDio() {
 
           if (e.response?.data is Map<String, dynamic>) {
             errorMessage = e.response?.data['message'];
-
           }
           Fluttertoast.showToast(
             msg: errorMessage,
@@ -72,16 +71,59 @@ Dio createDio() {
             (_) => false,
           );
           return handler.next(e);
-        }
+        } else if (e.response?.statusCode == 422) {
+          log('Validation Error: ${e.response?.data}');
 
-        else if (e.response?.statusCode == 422) {
+          String errorMessage = "Please enter valid data";
+
+          if (e.response?.data is Map<String, dynamic>) {
+            final errors = e.response?.data as Map<String, dynamic>;
+
+            // get first error message
+            if (errors.isNotEmpty) {
+              final firstError = errors.values.first;
+              if (firstError is List && firstError.isNotEmpty) {
+                errorMessage = firstError.first.toString();
+              }
+            }
+          }
+          Fluttertoast.showToast(
+            msg: errorMessage,
+            gravity: ToastGravity.BOTTOM,
+            toastLength: Toast.LENGTH_LONG,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+          return handler.next(e);
+        } else if (e.response?.statusCode == 404) {
           // Log the full error response for debugging
           log('Validation Error: ${e.response?.data}');
           // Extract validation messages if available
-          String errorMessage = "Please enter valid data";
+          String errorMessage = "Date Not Found";
           if (e.response?.data is Map<String, dynamic>) {
             errorMessage = e.response?.data['message'];
+          }
 
+          Fluttertoast.showToast(
+            msg: errorMessage,
+            gravity: ToastGravity.BOTTOM,
+            toastLength:
+                Toast.LENGTH_LONG, // Changed to LONG for better readability
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+
+          return handler.next(e);
+        } else if (e.response?.statusCode == 403) {
+          // Log the full error response for debugging
+          log('Validation Error: ${e.response?.data}');
+
+          // Extract validation messages if available
+          String errorMessage = "Date Not Found";
+          if (e.response?.data is Map<String, dynamic>) {
+            errorMessage = e.response?.data['message'];
           }
 
           // Show user-friendly error message
@@ -96,30 +138,7 @@ Dio createDio() {
           );
 
           return handler.next(e);
-        }
-        else if (e.response?.statusCode == 404) {
-          // Log the full error response for debugging
-          log('Validation Error: ${e.response?.data}');
-          // Extract validation messages if available
-          String errorMessage = "Date Not Found";
-          if (e.response?.data is Map<String, dynamic>) {
-            errorMessage = e.response?.data['message'];
-
-          }
-
-          Fluttertoast.showToast(
-            msg: errorMessage,
-            gravity: ToastGravity.BOTTOM,
-            toastLength:
-            Toast.LENGTH_LONG, // Changed to LONG for better readability
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-
-          return handler.next(e);
-        }
-        else if (e.response?.statusCode == 403) {
+        } else if (e.response?.statusCode == 400) {
           // Log the full error response for debugging
           log('Validation Error: ${e.response?.data}');
 
@@ -127,31 +146,6 @@ Dio createDio() {
           String errorMessage = "Date Not Found";
           if (e.response?.data is Map<String, dynamic>) {
             errorMessage = e.response?.data['message'];
-
-          }
-
-          // Show user-friendly error message
-          Fluttertoast.showToast(
-            msg: errorMessage,
-            gravity: ToastGravity.BOTTOM,
-            toastLength: Toast.LENGTH_LONG,  // Changed to LONG for better readability
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-
-          return handler.next(e);
-        }
-
-        else if (e.response?.statusCode == 400) {
-          // Log the full error response for debugging
-          log('Validation Error: ${e.response?.data}');
-
-          // Extract validation messages if available
-          String errorMessage = "Date Not Found";
-          if (e.response?.data is Map<String, dynamic>) {
-            errorMessage = e.response?.data['message'];
-
           }
 
           // Show user-friendly error message
@@ -166,17 +160,12 @@ Dio createDio() {
 
           return handler.next(e);
         }
-
-
-
       },
     ),
   );
 
   return dio;
 }
-
-
 
 Dio createDio2() {
   final dio = Dio();
@@ -190,5 +179,4 @@ Dio createDio2() {
   );
 
   return dio;
-
 }

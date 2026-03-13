@@ -58,11 +58,8 @@ dependencies:
   lucide_icons_flutter: ^3.1.7
   firebase_core: ^4.2.1
   firebase_auth: ^6.1.2
+  url_launcher: ^6.3.0
 
-
-
-
- 
 
  
 

@@ -1,15 +1,21 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:ai_powered_app/payScreen.dart';
+import 'package:ai_powered_app/screen/login.page.dart';
+import 'package:ai_powered_app/screen/paymentFormScreen.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../core/auth/login.auth.dart';
 
 class RegisterPage extends StatefulWidget {
   final String title;
+
   const RegisterPage({super.key, required this.title});
 
   @override
@@ -20,22 +26,19 @@ class _RegisterPageState extends State<RegisterPage> {
   late Razorpay _razorpay;
   bool _buttonLoader = false;
 
-  String? _tempToken;
-
-  @override
-  void initState() {
-    super.initState();
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-  }
-
-  @override
-  void dispose() {
-    _razorpay.clear();
-    super.dispose();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _razorpay = Razorpay();
+  //   _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+  //   _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+  //   _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  // }
+  // @override
+  // void dispose() {
+  //   _razorpay.clear();
+  //   super.dispose();
+  // }
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -79,6 +82,106 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  // void checkresisterAlready() async {
+  //   if (!_formKey.currentState!.validate()) return;
+  //   setState(() => _buttonLoader = true);
+  //   String category = widget.title.toUpperCase();
+  //   String phone = phoneController.text.trim();
+  //   String email = emailController.text.trim();
+  //   bool alreadyExists = false;
+  //   if (category == "JOBS") {
+  //     alreadyExists = await Auth.checkUserExists(
+  //       endpoint: "job",
+  //       phone: phone,
+  //       email: email,
+  //       context: context,
+  //     );
+  //   } else if (category == "REAL ESTATE") {
+  //     alreadyExists = await Auth.checkUserExists(
+  //       endpoint: "realestateuser",
+  //       phone: phone,
+  //       email: email,
+  //       context: context,
+  //     );
+  //   } else {
+  //     alreadyExists = await Auth.checkUserExists(
+  //       endpoint: "matrimony",
+  //       phone: phone,
+  //       email: email,
+  //       context: context,
+  //     );
+  //   }
+  //   if (alreadyExists) {
+  //     // Already registered → Block payment
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text("This user is already registered!"),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //     setState(() => _buttonLoader = false);
+  //     return;
+  //   }
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => PaymentFormScreen(title: widget.title),
+  //     ),
+  //   );
+  //   if (widget.title.toUpperCase() == "JOBS") {
+  //     await Auth.registerJobSeeker(
+  //       name: nameController.text.trim(),
+  //       email: emailController.text.trim(),
+  //       password: passwordController.text.trim(),
+  //       phone: phoneController.text.trim(),
+  //       resumeFile: _selectedFile!,
+  //       transactionId: widget.transactionId ?? "",
+  //       context: context,
+  //     );
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => LoginPage(widget.title)),
+  //       (route) => false,
+  //     );
+  //   } else if (widget.title.toUpperCase() == "REAL ESTATE") {
+  //     await Auth.registerRealState(
+  //       nameController.text.trim(),
+  //       emailController.text.trim(),
+  //       passwordController.text.trim(),
+  //       phoneController.text.trim(),
+  //       listRole == "Seller" ? "agent" : "buyer",
+  //       listRole == "Seller" ? (subRole ?? "") : "",
+  //       widget.transactionId ?? "",
+  //       context,
+  //     );
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => LoginPage(widget.title)),
+  //       (route) => false,
+  //     );
+  //   } else {
+  //     // Matrimony or others
+  //     await Auth.register(
+  //       emailController.text.trim(),
+  //       passwordController.text.trim(),
+  //       nameController.text.trim(),
+  //       phoneController.text.trim(),
+  //       ageController.text,
+  //       listGender?.toLowerCase() ?? "",
+  //       dobController.text,
+  //       widget.transactionId ?? "",
+  //       context,
+  //     );
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => LoginPage(widget.title)),
+  //       (route) => false,
+  //     );
+  //   }
+  //   // Naya user hai → Payment shuru karo
+  //   //_initiatePaymentAndRegister();
+  // }
+
   void checkresisterAlready() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -89,44 +192,104 @@ class _RegisterPageState extends State<RegisterPage> {
     String email = emailController.text.trim();
 
     bool alreadyExists = false;
+    String amount = "0";
+    Map<String, dynamic> result;
 
     if (category == "JOBS") {
-      alreadyExists = await Auth.checkUserExists(
+      result = await Auth.checkUserExists(
         endpoint: "job",
         phone: phone,
         email: email,
         context: context,
       );
     } else if (category == "REAL ESTATE") {
-      alreadyExists = await Auth.checkUserExists(
+      result = await Auth.checkUserExists(
         endpoint: "realestateuser",
         phone: phone,
         email: email,
         context: context,
       );
     } else {
-      alreadyExists = await Auth.checkUserExists(
+      result = await Auth.checkUserExists(
         endpoint: "matrimony",
         phone: phone,
         email: email,
         context: context,
       );
     }
+    alreadyExists = result["exists"];
+    amount = result["amount"];
 
     if (alreadyExists) {
-      // Already registered → Block payment
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("This user is already registered!"),
           backgroundColor: Colors.red,
         ),
       );
+
       setState(() => _buttonLoader = false);
       return;
     }
 
-    // Naya user hai → Payment shuru karo
-    _initiatePaymentAndRegister();
+    /// OPEN PAYMENT SCREEN
+    final String? transactionId = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => PaymentFormScreen(title: widget.title, amount: amount),
+      ),
+    );
+
+    /// USER CANCEL PAYMENT
+    if (transactionId == null) {
+      setState(() => _buttonLoader = false);
+      return;
+    }
+
+    /// REGISTER AFTER PAYMENT
+    if (widget.title.toUpperCase() == "JOBS") {
+      await Auth.registerJobSeeker(
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        phone: phoneController.text.trim(),
+        resumeFile: _selectedFile!,
+        transactionId: transactionId,
+        context: context,
+      );
+    } else if (widget.title.toUpperCase() == "REAL ESTATE") {
+      await Auth.registerRealState(
+        nameController.text.trim(),
+        emailController.text.trim(),
+        passwordController.text.trim(),
+        phoneController.text.trim(),
+        listRole == "Seller" ? "agent" : "buyer",
+        listRole == "Seller" ? (subRole ?? "") : "",
+        transactionId,
+        context,
+      );
+    } else {
+      await Auth.register(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+        nameController.text.trim(),
+        phoneController.text.trim(),
+        ageController.text,
+        listGender?.toLowerCase() ?? "",
+        dobController.text,
+        transactionId,
+        context,
+      );
+    }
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage(widget.title)),
+      (route) => false,
+    );
+    setState(() => _buttonLoader = false);
   }
 
   void _initiatePaymentAndRegister() async {
@@ -145,21 +308,6 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _buttonLoader = true);
 
     try {
-      // Step 1: Get Razorpay Order ID from your backend
-      // final String orderId = await Auth.paymentCreateApi(
-      //   widget.title == "REAL ESTATE"
-      //       ? "realestate"
-      //       : widget.title == "JOBS"
-      //       ? "job"
-      //       : widget.title == "MATRIMONY"
-      //       ? "matrimony"
-      //       : "",
-      //   // "1", // amount in paise (₹500)
-      //   "INR",
-      //   "${widget.title} Registration",
-      //   context,
-      // );
-
       final Map<String, String> paymentData = await Auth.paymentCreateApi(
         // Map receive karo
         widget.title == "REAL ESTATE"
@@ -173,10 +321,8 @@ class _RegisterPageState extends State<RegisterPage> {
         "${widget.title} Registration",
         context,
       );
-
       final String orderId = paymentData['orderId']!;
-      _tempToken = paymentData['tempToken'];
-
+      // widget.tras = paymentData['tempToken'];
       // Step 2: Open Razorpay Checkout
       var options = {
         // 'key': 'rzp_live_RiLH4JLherWNG6', // old rajveer online service
@@ -193,7 +339,6 @@ class _RegisterPageState extends State<RegisterPage> {
         },
         'theme': {'color': '#97144c4a1'},
       };
-
       _razorpay.open(options);
     } catch (e) {
       // ScaffoldMessenger.of(context).showSnackBar(
@@ -236,7 +381,7 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text.trim(),
           phone: phoneController.text.trim(),
           resumeFile: _selectedFile!,
-          tempToken: _tempToken!,
+          transactionId: "transactionId",
           context: context,
 
           // onSuccess: _showSuccessAndNavigate,
@@ -250,10 +395,10 @@ class _RegisterPageState extends State<RegisterPage> {
           phoneController.text.trim(),
           listRole == "Seller" ? "agent" : "buyer",
           listRole == "Seller" ? (subRole ?? "") : "",
-          _tempToken!,
+          "transactionId",
           context,
         );
-        _showSuccessAndNavigate();
+        //_showSuccessAndNavigate();
       } else {
         // Matrimony or others
         await Auth.register(
@@ -264,10 +409,10 @@ class _RegisterPageState extends State<RegisterPage> {
           ageController.text,
           listGender?.toLowerCase() ?? "",
           dobController.text,
-          _tempToken!,
+          "",
           context,
         );
-        _showSuccessAndNavigate();
+        //_showSuccessAndNavigate();
       }
     } catch (e) {
       // Any error: verification, network, registration
@@ -469,6 +614,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // REGISTER BUTTON WITH PAYMENT
               GestureDetector(
                 onTap: _buttonLoader ? null : checkresisterAlready,
+
                 child: Container(
                   width: double.infinity,
                   height: 55.h,
@@ -497,7 +643,13 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(height: 20.h),
               Center(
                 child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Navigator.push(
+                    //   context,
+                    //   CupertinoPageRoute(builder: (context) => PayScreen()),
+                    // );
+                  },
                   child: RichText(
                     text: TextSpan(
                       children: [

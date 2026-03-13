@@ -16,7 +16,7 @@ class RegisterRequest {
   String role;
   String? seller_name;
   String phone;
-  String tempToken;
+  String transactionId;
 
   RegisterRequest({
     required this.name,
@@ -28,7 +28,7 @@ class RegisterRequest {
     this.seller_name,
     required this.gender,
     required this.phone,
-    required this.tempToken,
+    required this.transactionId,
   });
 
   factory RegisterRequest.fromJson(Map<String, dynamic> json) =>
@@ -42,7 +42,7 @@ class RegisterRequest {
         seller_name: json["seller_name"],
         gender: json["gender"],
         phone: json["phone"],
-        tempToken: json['temp_token']
+        transactionId: json['transaction_id']
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,6 +55,6 @@ class RegisterRequest {
     "seller_name": seller_name,
     "gender": gender,
     "phone": phone,
-    "temp_token": tempToken,
+    "transaction_id": transactionId,
   };
 }

@@ -27,7 +27,7 @@ import 'package:path/path.dart' as path;
 
 class Auth {
   // Auth.dart mein
-  static Future<bool> checkUserExists({
+  static Future<Map<String, dynamic>> checkUserExists({
     required String endpoint, // jaise "job", "realestate", "matrimony"
     required String phone,
     required String email,
@@ -47,23 +47,17 @@ class Auth {
         final bool exists = data['exists'] == true;
         final String message =
             data['message'] ?? (exists ? "Already registered" : "New user");
+        final String amount = data['plan']?['price'] ?? "0";
 
-        // Fluttertoast.showToast(
-        //   msg: message,
-        //   toastLength: Toast.LENGTH_SHORT,
-        //   gravity: ToastGravity.TOP,
-        //   backgroundColor: exists ? Colors.red : Colors.green,
-        //   textColor: Colors.white,
-        // );
-        return exists; // true = already exists
+        return {"exists": exists, "amount": amount};
       }
-      return false;
+      return {"exists": false, "amount": "0"};
     } on DioException catch (e) {
       _handleDioError(e);
-      return false;
+      return {"exists": false, "amount": "0"};
     } catch (e) {
       print("Check exists error: $e");
-      return false;
+      return {"exists": false, "amount": "0"};
     }
   }
 
@@ -150,14 +144,6 @@ class Auth {
       }
       throw Exception('Failed to login: ${e.message}');
     } catch (e) {
-      // Fluttertoast.showToast(
-      //   msg: 'An unexpected error occurred: $e',
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   gravity: ToastGravity.TOP,
-      //   backgroundColor: Colors.red,
-      //   textColor: Colors.white,
-      //   fontSize: 12.0,
-      // );
       throw Exception('Failed to login: $e');
     }
   }
@@ -246,14 +232,6 @@ class Auth {
       }
       throw Exception('Failed to login: ${e.message}');
     } catch (e) {
-      // Fluttertoast.showToast(
-      //   msg: 'An unexpected error occurred: $e',
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   gravity: ToastGravity.TOP,
-      //   backgroundColor: Colors.red,
-      //   textColor: Colors.white,
-      //   fontSize: 12.0,
-      // );
       throw Exception('Failed to login: $e');
     }
   }
@@ -298,40 +276,8 @@ class Auth {
         );
       }
     } on DioException catch (e) {
-      // if (e.response?.statusCode == 403) {
-      //   // Handle 403 specifically
-      //   Fluttertoast.showToast(
-      //     msg:
-      //         e.response?.data['message'] ??
-      //         'Your profile is under review. Please wait for approval.',
-      //     toastLength: Toast.LENGTH_LONG,
-      //     gravity: ToastGravity.TOP,
-      //     backgroundColor: Colors.orange,
-      //     textColor: Colors.white,
-      //     fontSize: 12.0,
-      //   );
-      // } else {
-      //   // Handle other errors
-      //   Fluttertoast.showToast(
-      //     msg: e.response?.data['message'] ?? 'Login failed',
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.TOP,
-      //     backgroundColor: Colors.red,
-      //     textColor: Colors.white,
-      //     fontSize: 12.0,
-      //   );
-      // }
       throw Exception('Failed to login: ${e.message}');
     } catch (e) {
-      // Catch any other unexpected errors
-      // Fluttertoast.showToast(
-      //   msg: 'An unexpected error occurred: $e',
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   gravity: ToastGravity.TOP,
-      //   backgroundColor: Colors.red,
-      //   textColor: Colors.white,
-      //   fontSize: 12.0,
-      // );
       throw Exception('Failed to login: $e');
     }
   }
@@ -397,15 +343,6 @@ class Auth {
       }
       throw Exception('Failed to login: ${e.message}');
     } catch (e) {
-      // Catch any other unexpected errors
-      // Fluttertoast.showToast(
-      //   msg: 'An unexpected error occurred: $e',
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   gravity: ToastGravity.TOP,
-      //   backgroundColor: Colors.red,
-      //   textColor: Colors.white,
-      //   fontSize: 12.0,
-      // );
       throw Exception('Failed to login: $e');
     }
   }
@@ -467,39 +404,8 @@ class Auth {
         throw Exception('Failed to login');
       }
     } on DioException catch (e) {
-      // if (e.response?.statusCode == 403) {
-      //   // Handle 403 specifically
-      //   Fluttertoast.showToast(
-      //     msg:
-      //     e.response?.data['message'] ??
-      //         'Your profile is under review. Please wait for approval.',
-      //     toastLength: Toast.LENGTH_LONG,
-      //     gravity: ToastGravity.TOP,
-      //     backgroundColor: Colors.orange,
-      //     textColor: Colors.white,
-      //     fontSize: 12.0,
-      //   );
-      // } else {
-      //   // Handle other errors
-      //   Fluttertoast.showToast(
-      //     msg: e.response?.data['message'] ?? 'Login failed',
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.TOP,
-      //     backgroundColor: Colors.red,
-      //     textColor: Colors.white,
-      //     fontSize: 12.0,
-      //   );
-      // }
       throw Exception('Failed to login: ${e.message}');
     } catch (e) {
-      // Fluttertoast.showToast(
-      //   msg: 'An unexpected error occurred: $e',
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   gravity: ToastGravity.TOP,
-      //   backgroundColor: Colors.red,
-      //   textColor: Colors.white,
-      //   fontSize: 12.0,
-      // );
       throw Exception('Failed to login: $e');
     }
   }
@@ -563,29 +469,6 @@ class Auth {
         throw Exception('Failed to login');
       }
     } on DioException catch (e) {
-      // if (e.response?.statusCode == 403) {
-      //   // Handle 403 specifically
-      //   Fluttertoast.showToast(
-      //     msg:
-      //         e.response?.data['message'] ??
-      //         'Your profile is under review. Please wait for approval.',
-      //     toastLength: Toast.LENGTH_LONG,
-      //     gravity: ToastGravity.TOP,
-      //     backgroundColor: Colors.orange,
-      //     textColor: Colors.white,
-      //     fontSize: 12.0,
-      //   );
-      // } else {
-      //   // Handle other errors
-      //   Fluttertoast.showToast(
-      //     msg: e.response?.data['message'] ?? 'Login failed',
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.TOP,
-      //     backgroundColor: Colors.red,
-      //     textColor: Colors.white,
-      //     fontSize: 12.0,
-      //   );
-      // }
       throw Exception('Failed to login: ${e.message}');
     } catch (e) {
       // Fluttertoast.showToast(
@@ -608,7 +491,7 @@ class Auth {
     String age,
     String gender,
     String date_of_birth,
-    String tempToken,
+    String transaction_id,
     BuildContext context,
   ) async {
     final dio = await createDio();
@@ -623,7 +506,7 @@ class Auth {
         gender: gender,
         dateOfBirth: date_of_birth,
         role: '',
-        tempToken: tempToken,
+        transactionId: transaction_id,
       ),
     );
     if (response.response.data['message'] == "Registration successful") {
@@ -636,7 +519,7 @@ class Auth {
         fontSize: 12.0,
       );
       log('Register successful: ${response.response.data}');
-      Navigator.pop(context);
+      // Navigator.pop(context);
     } else {
       Fluttertoast.showToast(
         msg: response.response.data['message'],
@@ -673,7 +556,7 @@ class Auth {
         dateOfBirth: '',
         age: '',
         gender: '',
-        tempToken: tempToken,
+        transactionId: tempToken,
       ),
     );
     if (response.response.data['message'] == "Registration successful") {
@@ -686,7 +569,7 @@ class Auth {
         fontSize: 12.0,
       );
       log('Register successful: ${response.response.data}');
-      Navigator.pop(context);
+      // Navigator.pop(context);
     } else {
       Fluttertoast.showToast(
         msg: response.response.data['message'],
@@ -732,15 +615,6 @@ class Auth {
     } catch (e) {
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
 
-      // if (context.mounted) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text(errorMessage),
-      //       backgroundColor: Colors.red,
-      //     ),
-      //   );
-      // }
-
       throw Exception(errorMessage); // Ya phir custom PaymentException
     }
   }
@@ -776,103 +650,12 @@ class Auth {
     }
   }
 
-  /*
   static Future<void> registerJobSeeker({
     required String email,
     required String password,
     required String name,
     required String phone,
-    required File resumeFile,
-    required BuildContext context,
-
-  }) async {
-    final dio = await createDio();
-    final fileExtension = resumeFile.path.split('.').last.toLowerCase();
-    MediaType mediaType;
-    if (fileExtension == 'pdf') {
-      mediaType = MediaType("application", "pdf");
-    } else if (fileExtension == 'doc') {
-      mediaType = MediaType("application", "msword");
-    } else if (fileExtension == 'docx') {
-      mediaType = MediaType(
-        "application",
-        "vnd.openxmlformats-officedocument.wordprocessingml.document",
-      );
-    } else {
-      Fluttertoast.showToast(
-        msg: "Invalid file type. Please upload a PDF, DOC, or DOCX file.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 12.0,
-      );
-      return; // Exit early if the file type is not allowed
-    }
-    final formData = FormData.fromMap({
-      'name': name,
-      'email': email,
-      'password': password,
-      'phone': phone,
-      'resume':
- await MultipartFile.fromFile(
-          resumeFile.path,
-          filename: path.basename(resumeFile.path),
-        ),
-
-      // await MultipartFile.fromFile(
-      //   resumeFile.path,
-      //   filename: resumeFile.path.split('/').last,
-      //   contentType: mediaType,
-      // ),
-    });
-    try {
-      final response = await dio.post(
-        'https://matrimony.rajveerfacility.in/api/jobs/auth/register',
-        data: formData,
-      );
-
-      if (response.data['message'] == "Registration successful") {
-        Fluttertoast.showToast(
-          msg: "Registration successful",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 12.0,
-        );
-
-        Navigator.pop(context);
-      } else {
-        Fluttertoast.showToast(
-          msg: "Registration failed: ${response.data['message']}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 12.0,
-        );
-        throw Exception('Job registration failed');
-      }
-    } catch (e) {
-      // Fluttertoast.showToast(
-      //   msg: "Error: $e",
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   gravity: ToastGravity.TOP,
-      //   backgroundColor: Colors.red,
-      //   textColor: Colors.white,
-      //   fontSize: 12.0,
-      // );
-    }
-  }
-*/
-
-  static Future<void> registerJobSeeker({
-    required String email,
-    required String password,
-    required String name,
-    required String phone,
-    required String tempToken,
+    required String transactionId,
     required File resumeFile,
 
     required BuildContext context,
@@ -899,7 +682,7 @@ class Auth {
         'email': email,
         'password': password,
         'phone': phone,
-        'temp_token': tempToken,
+        'transaction_id': transactionId,
         'resume': await MultipartFile.fromFile(
           resumeFile.path,
           filename: path.basename(resumeFile.path),
@@ -917,7 +700,7 @@ class Auth {
           msg: "Registration successful!",
           backgroundColor: Colors.green,
         );
-        Navigator.pop(context);
+        // Navigator.pop(context);
       }
     } on DioException catch (e) {
       String errorMsg = "Registration failed";
@@ -963,7 +746,7 @@ class Auth {
         gender: gender,
         dateOfBirth: date_of_birth,
         role: '',
-        tempToken: tempToken,
+        transactionId: tempToken,
       ),
     );
     if (response.response.data['message'] == "Registration successful") {

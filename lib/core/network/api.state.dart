@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:ai_powered_app/data/models/RecentPrpertyModel.dart';
 import 'package:ai_powered_app/data/models/deletePhotoBodyModel.dart';
 import 'package:ai_powered_app/data/models/deletePhotoResModel.dart';
 import 'package:ai_powered_app/data/models/favouriteListBodyModel.dart';
 import 'package:ai_powered_app/data/models/favouriteListResModel.dart';
 import 'package:ai_powered_app/data/models/passwordChangeBodyModel.dart';
+import 'package:ai_powered_app/data/models/paymentResModel.dart';
 import 'package:ai_powered_app/data/models/sendOTPBodyModel.dart';
 import 'package:ai_powered_app/data/models/toggleFavouriteBodyModel.dart';
 import 'package:ai_powered_app/data/models/toggleFavouriteResModel.dart';
@@ -35,6 +38,7 @@ import '../../data/models/register.req.model.dart';
 import '../../data/models/rentModel.dart';
 import '../../screen/jobs.screen/myJobScreen.dart';
 import 'package:retrofit/http.dart';
+
 part 'api.state.g.dart';
 
 @RestApi(baseUrl: 'https://matrimony.rajveerfacility.in/api')
@@ -42,6 +46,17 @@ abstract class APIStateNetwork {
   factory APIStateNetwork(Dio dio) = _APIStateNetwork;
 
   ////////////////////////////////  Matrimony Api Network ////////////////////////////////////////////
+
+  // @POST('/payment')
+  // Future<PaymentResModel> matrimonyPayment(@Body() PaymentBodyModel body);
+  @POST("/payment")
+  @MultiPart()
+  Future<PaymentResModel> matrimonyPayment(
+    @Part(name: "amount") String amount,
+    @Part(name: "transaction_id") String transactionId,
+    @Part(name: "image") File image,
+  );
+
   @POST("/{module}/send-otp")
   Future<SendOtpResModel> sendOtp(
     @Path("module") String module,
